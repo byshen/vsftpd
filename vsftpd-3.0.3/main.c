@@ -186,7 +186,7 @@ main(int argc, const char* argv[])
                  vsf_sysutil_inet_ntop(the_session.p_remote_addr));
   /* Set up options on the command socket */
 
-  ace_printf("hello ace instrument, %d %s", 2021, "start!");
+  // ace_printf("hello ace instrument, %d %s", 2021, "start!");
   vsf_cmdio_sock_setup();
   if (tunable_setproctitle_enable)
   {

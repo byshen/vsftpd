@@ -25,7 +25,7 @@ class myFTP:
     bIsDir = False
 
     def __init__(self, host, port="21"):
-        self.ftp.set_debuglevel(2)
+        self.ftp.set_debuglevel(1)
         self.ftp.set_pasv(0)  # 0主动模式，1被动模式
         self.ftp.connect(host, int(port))
 
@@ -35,9 +35,13 @@ class myFTP:
 
     def DownloadFile(self, LocalFile, RemoteFile):
         print("downloading to ", LocalFile)
-        file_handler = open(LocalFile, "wb")
-        self.ftp.retrbinary("RETR {}".format(RemoteFile), file_handler.write)
-        file_handler.close()
+        try:
+            file_handler = open(LocalFile, "wb")
+            self.ftp.retrbinary("RETR {}".format(RemoteFile), file_handler.write)
+            file_handler.close()  
+        except Exception as e:
+            os.remove(LocalFile) # clean up failed runs
+            print(LocalFile, RemoteFile, e)
         return
 
     def UploadFile(self, LocalFile, RemoteFile):
@@ -67,44 +71,68 @@ class myFTP:
         return
 
     def DownLoadFileTree(self, LocalDir, RemoteDir):
+        """Recursively download all files under the RemoteDir
+
+        Args:
+            LocalDir (str): absolute path to download dir
+            RemoteDir (str): relative path on server
+        """
         if os.path.isdir(LocalDir) == False:
             os.makedirs(LocalDir)
         self.ftp.cwd(RemoteDir)
-        RemoteNames = self.ftp.nlst()
 
-        for file in RemoteNames:
-            Local = os.path.join(LocalDir, file)
-            if self.isDir(file):
-                self.DownLoadFileTree(Local, file)
-            else:
-                try:
-                    self.DownloadFile(Local, file)           
-                except Exception as e:
-                    print(LocalDir, file, e)
+        try:
+            RemoteNames = self.ftp.nlst()          
+            for file in RemoteNames:
+                Local = os.path.join(LocalDir, file)
+                print("remote file:", file)
+                if self.isDir(file):
+                    self.DownLoadFileTree(Local, file)
+                else:
+                    try:
+                        self.DownloadFile(Local, file)           
+                    except Exception as e:
+                        print(LocalDir, file, e)
+        except Exception as e:
+            print("directory listing failed, ", LocalDir, RemoteDir, e)
+
+
         self.ftp.cwd("..")
         return
 
     def show(self, list):
-        result = list.lower().split(" ")
-        if self.path in result and "<dir>" in result:
+        result = list.split(" ")
+        print("list", result)
+        if self.path in result and result[0][0] == 'd':
             self.bIsDir = True
 
     def isDir(self, path):
         self.bIsDir = False
         self.path = path
         # this ues callback function ,that will change bIsDir value
-        self.ftp.retrlines("LIST", self.show)
+        res = self.ftp.retrlines("LIST", self.show)
+        print("isDir", res, self.bIsDir)
         return self.bIsDir
 
     def close(self):
         self.ftp.quit()
 
 
+"""
+1. We measure two things, first is the query execution time 
+2. Then we measure the log size overhead.
+3. Also calculate the percentage of permission denied requests!!!
+"""
+
+def getLogSize():
+
+    return 0
+
 if __name__ == "__main__":
     ftp = myFTP("localhost")
     ftp.Login("ftpuser1", "ftpuser1-pass")
 
     ftp.DownLoadFileTree(os.getcwd() + "/files/", "/files")  # ok
-    ftp.UpLoadFileTree(os.getcwd() +"/files/", "/files")
+    # ftp.UpLoadFileTree(os.getcwd() +"/files/", "/files")
     ftp.close()
     print("ok!")
