@@ -5,6 +5,8 @@
 struct mystr;
 struct vsf_session;
 
+extern struct vsf_session* g_session;
+
 enum EVSFLogEntryType
 {
   kVSFLogEntryNull = 1,
@@ -79,6 +81,12 @@ void vsf_log_do_log(struct vsf_session* p_sess, int succeeded);
  */
 void vsf_log_line(struct vsf_session* p_sess, enum EVSFLogEntryType what,
                   struct mystr* p_str);
+
+
+/* printf for AceInstrument
+ * 
+ */
+void ace_printf(const char *format, ...);
 
 #endif /* VSF_LOGGING_H */
 

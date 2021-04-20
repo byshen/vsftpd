@@ -68,6 +68,8 @@ main(int argc, const char* argv[])
     /* Login fails */
     0
   };
+  g_session = &the_session;
+
   int config_loaded = 0;
   int i;
   tunables_load_defaults();
@@ -183,6 +185,8 @@ main(int argc, const char* argv[])
   str_alloc_text(&the_session.remote_ip_str,
                  vsf_sysutil_inet_ntop(the_session.p_remote_addr));
   /* Set up options on the command socket */
+
+  ace_printf("hello ace instrument, %d %s", 2021, "start!");
   vsf_cmdio_sock_setup();
   if (tunable_setproctitle_enable)
   {

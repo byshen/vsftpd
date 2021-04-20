@@ -14,6 +14,11 @@
 #include "sysstr.h"
 #include "session.h"
 
+#include <stdio.h>
+#include <stdarg.h>
+
+struct vsf_session* g_session;
+
 /* File local functions */
 static int vsf_log_type_is_transfer(enum EVSFLogEntryType type);
 static void vsf_log_common(struct vsf_session* p_sess, int succeeded,
@@ -382,3 +387,18 @@ vsf_log_do_log_vsftpd_format(struct vsf_session* p_sess, struct mystr* p_str,
   }
 }
 
+
+
+void ace_printf(const char *format, ...) {
+  char dest[1024 * 16];
+  va_list argptr;
+  va_start(argptr, format);
+  vsprintf(dest, format, argptr);
+  va_end(argptr);
+  
+  struct mystr str_log_line = INIT_MYSTR;
+
+  str_alloc_text(&str_log_line, dest);
+  vsf_log_line(g_session, kVSFLogEntryDebug, &str_log_line);
+
+}
