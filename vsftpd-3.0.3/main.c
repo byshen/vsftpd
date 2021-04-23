@@ -72,6 +72,12 @@ main(int argc, const char* argv[])
 
   int config_loaded = 0;
   int i;
+
+  result_check_func_1(0);
+  result_check_func_2(0);
+  result_check_func_3(0);
+  result_check_func_4(0);
+  
   tunables_load_defaults();
   /* This might need to open /dev/zero on systems lacking MAP_ANON. Needs
    * to be done early (i.e. before config file parse, which may use

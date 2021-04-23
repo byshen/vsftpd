@@ -388,7 +388,9 @@ vsf_log_do_log_vsftpd_format(struct vsf_session* p_sess, struct mystr* p_str,
 }
 
 
-
+/* 
+ * Log func
+*/
 void ace_printf(const char *format, ...) {
   char dest[1024 * 16];
   va_list argptr;
@@ -401,4 +403,32 @@ void ace_printf(const char *format, ...) {
   str_alloc_text(&str_log_line, dest);
   vsf_log_line(g_session, kVSFLogEntryDebug, &str_log_line);
 
+}
+
+/* 
+ * Result check func
+*/
+
+// 0 EQ
+int result_check_func_1(int res) {
+    if (res == 0) return 1;
+    return 0;
+}
+
+// NE 0
+int result_check_func_2(int res) {
+    if (res != 0) return 1;
+    return 0;
+}
+
+// 0 NE vsf_sysutil_retval_is_error
+int result_check_func_3(int res) {
+    if ((vsf_sysutil_retval_is_error(res)) != 0) return 1;
+    return 0;
+}
+
+// 4399 EQ
+int result_check_func_4(struct vsf_sysutil_user* res) {
+    if (!res) return 1;
+    return 0;
 }

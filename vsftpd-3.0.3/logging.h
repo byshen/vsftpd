@@ -4,6 +4,7 @@
 /* Forward delcarations */
 struct mystr;
 struct vsf_session;
+struct vsf_sysutil_user;
 
 extern struct vsf_session* g_session;
 
@@ -83,10 +84,22 @@ void vsf_log_line(struct vsf_session* p_sess, enum EVSFLogEntryType what,
                   struct mystr* p_str);
 
 
-/* printf for AceInstrument
- * 
+/* log func for AceInstrument
  */
 void ace_printf(const char *format, ...);
+
+
+// int EQ 0
+int result_check_func_1(int res);
+
+// int NE 0
+int result_check_func_2(int res);
+
+// 0 NE vsf_sysutil_retval_is_error
+int result_check_func_3(int res);
+
+// 4399 EQ
+int result_check_func_4(struct vsf_sysutil_user* res);
 
 #endif /* VSF_LOGGING_H */
 
